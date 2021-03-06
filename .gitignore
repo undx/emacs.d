@@ -1,0 +1,17 @@
+# Compiled
+*.elc
+# Packaging
+.cask
+# Backup files
+*~
+# Undo-tree save-files
+*.~undo-tree
+.persistent-scratch
+auto-save-list
+cache
+elpa
+history
+places
+recentf
+smex*
+transient
