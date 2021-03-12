@@ -6,12 +6,20 @@
 *~
 # Undo-tree save-files
 *.~undo-tree
+.last-package-update-day
+.org-id-locations
 .persistent-scratch
 auto-save-list
+bookmarks
 cache
-elpa
+company-statistics-cache.el
+elpa/
+eshell/
+flycheck_init.el
 history
+org-roam.db
 places
 recentf
 smex*
 transient
+var/
