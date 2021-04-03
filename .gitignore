@@ -23,3 +23,5 @@ recentf
 smex*
 transient
 var/
+/*.sqlite
+/*.eld
