@@ -25,3 +25,5 @@ transient
 var/
 /*.sqlite
 /*.eld
+/.org-generic-id-locations
+/bm-repository
