@@ -1317,7 +1317,8 @@
 ;;;; rust
 ;; (use-package rust-mode :ensure t :defer t :init)
 ;; (use-package flycheck-rust :ensure t :defer t :init (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
-
+;;;; lua
+(use-package lua-mode :ensure t :mode ("\\.lua$" . lua-mode))
 ;;; org-mode
 ;;;; main
 (use-package org
