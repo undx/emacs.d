@@ -275,9 +275,11 @@
 (setq cursor-type 'bar)
 (setq-default cursor-in-non-selected-windows 'nil)
 
-(set-face-attribute 'default nil     :font "JetBrains Mono" :height 120)
-(set-face-attribute 'fixed-pitch nil :font "Jetbrains Mono" :height 120)
-(set-face-attribute 'variable-pitch nil :font "Ubuntu Mono" :height 120)
+(set-face-attribute 'default nil     :font "IBM Plex Mono" :height 150)
+;;(set-face-attribute 'default nil     :font "JetBrainsMono Nerd Font" :height 140)
+(set-face-attribute 'fixed-pitch nil :font "JetbrainsMono Nerd Font" :height 140)
+(set-face-attribute 'variable-pitch nil :font "IBM Plex Sans" :height 140)
+;;(set-face-attribute 'variable-pitch nil :font "Ubuntu Nerd Font" :height 140)
 ;;;; FringeMark
 ;; Left . Right
 (set-fringe-mode '(30 . 20))
@@ -449,17 +451,13 @@
 ;; icons
 (use-package all-the-icons
   :ensure t)
-(use-package all-the-icons-dired
-  :ensure t
-  :after all-the-icons
-  :hook (dired-mode . all-the-icons-dired-mode))
 ;;; window management
 ;;
 ;; C-x o Switch active window
-;; C-x 0 Deletes the active window
-;; C-x 1 Deletes other windows
-;; C-x 2 Split window below
-;; C-x 3 Split window right
+;; C-x 0 Deletes the active window / is None of window
+;; C-x 1 Deletes other windows / is current window
+;; C-x 2 Split window below / is the next window anti-clockwise
+;; C-x 3 Split window right / is subsequent counting anti-clockwise
 ;;
 ;; C-x 4 Other window management
 ;;
@@ -677,10 +675,9 @@
 ;; https://github.com/Fuco1/smartparens
 (use-package smartparens
   :ensure t
-  :defer t
   :diminish "sp"
   :config
-  ;;(require 'smartparens-config)
+  (require 'smartparens-config)
   (smartparens-global-mode)
   (setq sp-show-enclosing-pair-commands t)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
@@ -723,18 +720,59 @@
   (add-hook 'minibuffer-setup-hook 'turn-on-smartparens-strict-mode)
   ;; (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
   )
-;;
+;;;;; multiple-cursors
 (use-package multiple-cursors
   :ensure t
   :bind (("C-c m m" . #'mc/edit-lines )
          ("C-c m d" . #'mc/mark-all-dwim )))
-;; expand-region
+;;;;; expand-region
 (use-package expand-region
   :ensure t
   :defer t
   :bind (("C-=" . er/expand-region)
          ("C--" . er/contract-region)))
-;; duplicate-thing
+;;;;; selected
+(use-package selected
+  :ensure t
+  ;; Setting the hooks here manually instead of (selected-global-mode)
+  ;; So use-package creates autoloads for us and only loads this package
+  ;; if we really use it (i.e. mark anything)
+  :hook ((activate-mark . selected--on)
+         (deactivate-mark . selected-off))
+  :init (defvar selected-org-mode-map (make-sparse-keymap))
+  :bind (:map selected-keymap
+              ("q" . selected-off)
+              ;; move stuff
+              ;;("<down>" . drag-stuff-down)
+              ;;("<up>" . drag-stuff-up)
+              ;;("n" . drag-stuff-down)
+              ;;("p" . drag-stuff-up)
+              ;; undo
+              ("/" . undo-in-region)
+              ;; transform
+              ("c" . capitalize-region)
+              ("u" . upcase-region)
+              ("l" . downcase-region)
+              ("s" . sort-lines)
+              ("w" . count-words-region)
+              ("x" . apply-macro-to-region-lines)
+              ("D" . delete-duplicate-lines)
+              ;; multiple cursors
+              ("v" . mc/vertical-align-with-space)
+              ("a" . mc/mark-all-dwim)
+              ("A" . mc/mark-all-like-this)
+              ("m" . mc/mark-more-like-this-extended)
+              ("p" . mc/mark-previous-like-this)
+              ("P" . mc/unmark-previous-like-this)
+              ("S" . mc/skip-to-previous-like-this)
+              ("n" . mc/mark-next-like-this)
+              ("N" . mc/unmark-next-like-this)
+              ("s" . mc/skip-to-next-like-this)
+              ("r" . mc/edit-lines)
+              :map selected-org-mode-map
+              ("t" . org-table-convert-region)
+              ("-" . org-ctrl-c-minus)))
+;;;;; duplicate-thing
 (use-package duplicate-thing
   :ensure t
   :defer t
@@ -746,7 +784,7 @@
     (save-mark-and-excursion (duplicate-thing 1)))
   ;;:bind (("C-c u" . my-duplicate-thing) ("C-c C-u" . my-duplicate-thing))
   )
-;; drag-stuff
+;;;;; drag-stuff
 (use-package drag-stuff
   :ensure t
   :defer t
@@ -754,7 +792,7 @@
   :config
   (drag-stuff-global-mode t)
   )
-;; yasnippet
+;;;;; yasnippet
 (use-package yasnippet
   :ensure t
   :ensure yasnippet-snippets
@@ -791,7 +829,7 @@
 ;;   (add-hook hook 'turn-on-column-number-mode)
 ;;   (add-hook hook 'turn-off-line-number-mode)
 ;;   (add-hook hook 'linum-mode))
-;; magit
+;;;; magit
 (use-package magit
   :ensure t
   :custom
@@ -1895,6 +1933,7 @@ assignee   changed BY currentuser() AFTER startOfWeek() BEFORE endOfWeek()
 ;;;; dired
 (use-package dired
   :custom
+  (insert-directory-program "gls")
   (dired-listing-switches "-AFhl --group-directories-first")
   (dired-dwim-target t)
   (dired-recursive-copies (quote always))
@@ -1910,7 +1949,6 @@ assignee   changed BY currentuser() AFTER startOfWeek() BEFORE endOfWeek()
 (when (memq window-system '(mac ns))
   (use-package exec-path-from-shell
     :ensure t
-    :defer t
     :config (exec-path-from-shell-initialize)))
 ;;;; encryption
 (use-package epa

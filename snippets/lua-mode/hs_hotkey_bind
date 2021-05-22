@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: hs.hotkey.bind
+# key: hsk
+# --
+hs.hotkey.bind($1,"$2", function()
+  $0
+end)
